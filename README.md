@@ -12,7 +12,7 @@
 
 Anda dapat mengunduh versi terbaru SitePing langsung melalui tautan di bawah ini:
 
-### **[👉 DOWNLOAD SITEPING APK v1.1.0 👈](https://github.com/Rezaa809/SitePing/releases/download/v1.1.0/SitePing_v1.1.0.apk)**
+### **[👉 DOWNLOAD SITEPING APK v1.1.0 👈](https://github.com/Rezaa809/SitePing/releases/tag/v1.1.0)**
 
 > **⚠️ Catatan Instalasi:** Jika muncul peringatan "Play Protect" atau "Unknown Source", silakan klik **"Detail/Rincian"** lalu pilih **"Tetap Instal" (Install Anyway)**. Aplikasi ini aman, open-source, dan hanya membutuhkan akses internet.
 
