@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Web Monitor - Ultimate Dark</title>
+    <style>
+        :root {
+            --bg: #000000;
+            --card: #0e0e0e; /* Abu-abu sangat gelap untuk kedalaman */
+            --border: #1f1f1f;
+            --text-main: #ffffff;
+            --text-dim: #555555;
+            --online: #22c55e;
+            --offline: #ef4444;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        #net-status {
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            border: 1px solid var(--border);
+        }
+        .net-online { color: var(--online); background: rgba(34, 197, 94, 0.05); }
+        .net-offline { color: var(--offline); background: rgba(239, 68, 68, 0.05); animation: blink 1s infinite; }
+
+        @keyframes blink { 50% { opacity: 0.3; } }
+
+        .header h1 { font-size: 1.2rem; margin: 0 0 25px 0; letter-spacing: 2px; font-weight: 900; }
+
+        .controls {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            gap: 8px;
+            margin-bottom: 30px;
+        }
+
+        input {
+            flex: 1;
+            background: #111;
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 12px 15px;
+            border-radius: 10px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .add-btn {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 0 18px;
+            border-radius: 10px;
+            font-weight: 800;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        /* GRID KARTU - PROPORSI PAS */
+        #monitor-grid {
+            width: 100%;
+            max-width: 1000px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 15px;
+            flex-grow: 1;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            min-height: 140px; /* Tinggi yang pas, tidak terlalu panjang */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 16px;
+            position: relative;
+            padding: 20px 10px;
+            transition: 0.3s;
+        }
+
+        .card.online { border-bottom: 3px solid var(--online); }
+        .card.offline { border-bottom: 3px solid var(--offline); opacity: 0.6; }
+
+        .btn-del {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .led {
+            width: 8px; height: 8px; border-radius: 50%;
+            margin-bottom: 12px; background: #222;
+        }
+        .online .led { background: var(--online); box-shadow: 0 0 12px var(--online); }
+        .offline .led { background: var(--offline); }
+
+        .card-name { 
+            font-weight: 800; 
+            font-size: 13px; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+        }
+
+        .card-url {
+            font-size: 9px;
+            color: var(--text-dim);
+            margin-top: 2px;
+            max-width: 130px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .card-status { font-size: 8px; font-weight: 900; margin-top: 10px; letter-spacing: 1px; }
+        .online .card-status { color: var(--online); }
+        .offline .card-status { color: var(--offline); }
+
+        .ping-val {
+            font-size: 9px;
+            color: var(--text-dim);
+            margin-top: 5px;
+            font-family: monospace;
+        }
+
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            padding-bottom: 25px;
+        }
+
+        .credit-text { font-size: 10px; color: #333; letter-spacing: 1px; margin-bottom: 12px; }
+        .social-links { display: flex; justify-content: center; gap: 20px; }
+        .social-links a { color: #444; transition: 0.3s; }
+        .social-links a:hover { color: #fff; }
+        .icon-svg { width: 18px; height: 18px; fill: currentColor; }
+    </style>
+</head>
+<body>
+
+    <div id="net-status">SYSTEM_CHECK</div>
+
+    <div class="header">
+        <h1>WEBSITE_MONITOR</h1>
+    </div>
+
+    <div class="controls">
+        <input type="text" id="site-url" placeholder="Paste link (contoh: google.com)">
+        <button class="add-btn" onclick="addSite()">ADD</button>
+    </div>
+
+    <div id="monitor-grid"></div>
+
+    <footer>
+        <div class="credit-text">CREATED BY [REKA]</div>
+        <div class="social-links">
+            <a href="https://instagram.com/rees_re" target="_blank"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+            <a href="https://github.com/Rezaa809" target="_blank"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a>
+        </div>
+    </footer>
+
+<script>
+    let sites = JSON.parse(localStorage.getItem('ultimate_monitor_v5')) || [];
+
+    function checkDevice() {
+        const isOnline = navigator.onLine;
+        const el = document.getElementById('net-status');
+        el.innerText = isOnline ? "SYSTEM_ONLINE" : "SYSTEM_OFFLINE";
+        el.className = isOnline ? "net-online" : "net-offline";
+        if (!isOnline) forceAllOffline();
+        return isOnline;
+    }
+
+    function forceAllOffline() {
+        sites.forEach(site => updateUI(site.id, 'offline', '--'));
+    }
+
+    function save() { localStorage.setItem('ultimate_monitor_v5', JSON.stringify(sites)); }
+
+    function render() {
+        const grid = document.getElementById('monitor-grid');
+        grid.innerHTML = '';
+        sites.forEach(site => {
+            const card = document.createElement('div');
+            card.className = `card ${site.status || 'offline'}`;
+            card.id = `site-${site.id}`;
+            card.innerHTML = `
+                <button class="btn-del" onclick="removeSite('${site.id}')">×</button>
+                <div class="led"></div>
+                <span class="card-name">${site.name}</span>
+                <span class="card-url">${site.displayUrl}</span>
+                <span class="card-status">${(site.status || 'offline').toUpperCase()}</span>
+                <span class="ping-val">${site.latency || '--'}ms</span>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    async function checkSite(id) {
+        if(!navigator.onLine) return;
+        const idx = sites.findIndex(s => s.id === id);
+        if(idx === -1) return;
+        const start = performance.now();
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3000);
+            await fetch(sites[idx].url + "?c=" + Date.now(), { mode: 'no-cors', cache: 'no-cache', signal: controller.signal });
+            clearTimeout(timeoutId);
+            const lat = Math.round(performance.now() - start);
+            updateUI(id, 'online', lat);
+        } catch (e) {
+            updateUI(id, 'offline', '--');
+        }
+    }
+
+    function updateUI(id, status, ms) {
+        const idx = sites.findIndex(s => s.id === id);
+        if(idx !== -1) { sites[idx].status = status; sites[idx].latency = ms; }
+        const el = document.getElementById(`site-${id}`);
+        if(el) {
+            el.className = `card ${status}`;
+            el.querySelector('.card-status').innerText = status.toUpperCase();
+            el.querySelector('.ping-val').innerText = ms + (ms === '--' ? '' : 'ms');
+        }
+    }
+
+    function addSite() {
+        const input = document.getElementById('site-url');
+        if(!input.value) return;
+        let rawUrl = input.value.trim();
+        let fullUrl = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
+
+        // Anti-Double
+        if(sites.some(s => s.url.toLowerCase() === fullUrl.toLowerCase())) {
+            alert("Situs sudah ada!");
+            input.value = '';
+            return;
+        }
+
+        let name = "Web";
+        let displayUrl = rawUrl.replace(/^https?:\/\//, '');
+        try { 
+            const urlObj = new URL(fullUrl);
+            name = urlObj.hostname.replace('www.', '').split('.')[0]; 
+        } catch(e) {}
+        
+        const id = "id" + Date.now();
+        sites.push({ id, name, url: fullUrl, displayUrl, status: 'offline', latency: '--' });
+        save(); render(); checkSite(id);
+        input.value = '';
+    }
+
+    function removeSite(id) {
+        sites = sites.filter(s => s.id !== id);
+        save(); render();
+    }
+
+    function refreshAll() {
+        if(!navigator.onLine) return;
+        sites.forEach(s => checkSite(s.id));
+    }
+
+    setInterval(checkDevice, 1000);
+    setInterval(refreshAll, 3000);
+    window.onload = () => { checkDevice(); render(); refreshAll(); };
+</script>
+</body>
+</html>
